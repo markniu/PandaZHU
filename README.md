@@ -21,3 +21,5 @@ FAN | Support mixed use of 5V/24V fans,3 of them are controllabe fans
 Audio |  play music at boot, Error/alarm music..
 OS | Real-time operating systems (RTOS)
 App | control printer, upload files with web browser ,[see more](https://github.com/luc-github/ESP3D-WEBUI)
+
+[More details](https://hackaday.io/project/180298-esp32-has-not-enough-gpio)
