@@ -1,0 +1,14 @@
+{
+    "name": "SoftwareSerialEsp32",
+    "keywords": [
+      "serial", "io", "softwareserial"
+    ],
+    "description": "Implementation of the Arduino software serial for ESP32.",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/jdollar/espsoftwareserial.git"
+    },
+    "frameworks": "arduino",
+    "platforms": "espressif"
+}
