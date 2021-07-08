@@ -1,7 +1,7 @@
 
 ESP32 is not a wifi module,but a 3D printer controller.  
 
-it has more powerful and larger memory than normal 32bit 3D printer control board.
+it has more powerful and larger memory than normal 32bit 3D printer motherboard.
 
 the file upload speed to sd card is higher than it as a wifi module, it can support more motor drivers with one fast expand GPIO chip.
 
