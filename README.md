@@ -10,7 +10,7 @@ Items | Specifications
 MCU | Two 32-bit MCU ,240MHz
 RAM |  520 KBytes SRAM |	
 ROM |  4M Bytes Flash memory
-EXGPIO | there are 24 more GPIOs with a expander, the expanded GPIO speed is 70kHz
+EXGPIO | there are 24 more GPIOs(only as output) with a expander, the expanded GPIO speed is 70kHz
 WiFi |  802.11 b/g/n/d/e/i/k/r (802.11n up to 150 Mbps)
 Bluetooth | Bluetooth v4.2
 Motors | support 8 Motor drivers
