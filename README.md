@@ -15,7 +15,7 @@ WiFi |  802.11 b/g/n/d/e/i/k/r (802.11n up to 150 Mbps)
 Bluetooth | Bluetooth v4.2
 Motors | support 8 Motor drivers
 heaters | 3 heaters
-temperature | support 3 thermistors
+temperature | support 3 thermistors (30degree~250degree)
 Bed leveling    | 	  BLtouch/ support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
 LCD   | 	LCD128*64/PandaTouchScreen/DGUS touch screen
 FAN | Support mixed use of 5V/24V fans,3 of them are controllabe fans
