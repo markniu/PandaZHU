@@ -27,3 +27,6 @@ OS | Real-time operating systems (RTOS)
 App | control printer, upload files with web browser ,[see more](https://github.com/luc-github/ESP3D-WEBUI)
 
 [More details](https://hackaday.io/project/180298-esp32-has-not-enough-gpio)
+
+
+[where to buy](https://www.pandapi3d.com/)
