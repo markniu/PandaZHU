@@ -26,7 +26,8 @@ Audio |  play music at boot, Error/alarm music..
 OS | Real-time operating systems (RTOS)
 App | control printer, upload files with web browser ,[see more](https://github.com/luc-github/ESP3D-WEBUI)
 
-[More details](https://hackaday.io/project/180298-esp32-has-not-enough-gpio)
+[Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
 
+[test video](https://www.youtube.com/watch?v=XavRP-p-_Is)
 
 [where to buy](https://www.pandapi3d.com/)
