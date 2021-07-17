@@ -28,6 +28,10 @@ App | control printer, upload files with web browser ,[see more](https://github.
 
 [Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
 
+### Flashing firmware
+To flash firmware by directly connecting to your computer with usb line,you will need to insert the sd card to the sdcard slot on the board.before that you should install and compile firmware,[see more](https://github.com/markniu/PandaZHU/wiki/Compile&Flash-firmware)
+
+
 [test video](https://www.youtube.com/watch?v=XavRP-p-_Is)
 
 [where to buy](https://www.pandapi3d.com/)
