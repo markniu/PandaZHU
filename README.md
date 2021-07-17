@@ -31,7 +31,36 @@ App | control printer, upload files with web browser ,[see more](https://github.
 ### Flashing firmware
 To flash firmware by directly connecting to your computer with usb line,you will need to insert the sd card to the sdcard slot on the board.before that you should install and compile firmware,[see more](https://github.com/markniu/PandaZHU/wiki/Compile&Flash-firmware)
 
-
+### PinMap
+Name |  GPIO  ||Name |  GPIO 
+--- | --- |---| --- | ---  
+X_Endstop | 4 | | Y_Endstop | 35
+Z_Endstop | 21 | | SERVO(BLTOUCH PWM) |  0
+X_Step | 101 | | X_Dir | 100
+Y_Step | 103 | | Y_Dir | 102
+Z_Step | 105 | | Z_Dir | 104
+E0_Step | 107 | | E0_Dir | 106
+E1_Step | 115 | | E1_Dir | 114
+E2_Step | 112 | | E2_Dir | 113
+E3_Step | 110 | | E3_Dir | 111
+E4_Step | 121 | | E4_Dir | 122
+XYZE_ENABLE | 128 | |  |
+Heater Bed |  109 | |  Heater_Hotend0 |  108
+Heater_Hotend1 |  123 || |
+Fan0(model) |  118 | | Fan1(model) | 119 
+Fan2(Hotend0/E0 Auto) | 120 | |   |   
+Bed Thermistor |  36 | | Hotend0 Thermistor |  39
+Hotend1 Thermistor | 34  | |  |
+Filament Runout |  22 || RGB light|  15
+DHT11 | 13  | |  |   
+LCD_BTN | 32 | | LCD_BTN1 | 33 
+LCD_BTN2 |  25 | | LCD_RS |  27
+LCD_ENABLE |  26 | | LCD_D4 |  14
+Beeper |  129 || |
+SD_MOSI | 23 | | SD_MISO | 19
+SD_SCK | 18 | | SDSS | 5
+SD_DETECT | 2 | |  |
+SPEAKER | 25 | |  |
 [test video](https://www.youtube.com/watch?v=XavRP-p-_Is)
 
 [where to buy](https://www.pandapi3d.com/)
