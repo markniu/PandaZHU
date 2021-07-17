@@ -61,6 +61,7 @@ SD_MOSI | 23 | | SD_MISO | 19
 SD_SCK | 18 | | SDSS | 5
 SD_DETECT | 2 | |  |
 SPEAKER | 25 | |  |
+
 [test video](https://www.youtube.com/watch?v=XavRP-p-_Is)
 
 [where to buy](https://www.pandapi3d.com/)
