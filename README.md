@@ -1,5 +1,5 @@
 
-use esp32 as the mcu for 3D printer motherboard.
+use esp32 as the mcu for 3D printer motherboard. [Support me by buying](https://www.pandapi3d.com/)
 
 it has  larger memory and more powerful than normal 32bit 3D printer motherboard.
 
@@ -64,4 +64,4 @@ SPEAKER | 25 | |  |
 
 [test video](https://youtu.be/NXPrnBnW2KA)
 
-[where to buy](https://www.pandapi3d.com/)
+
