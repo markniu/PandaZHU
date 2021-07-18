@@ -62,6 +62,6 @@ SD_SCK | 18 | | SDSS | 5
 SD_DETECT | 2 | |  |
 SPEAKER | 25 | |  |
 
-[test video](https://www.youtube.com/watch?v=XavRP-p-_Is)
+[test video](https://youtu.be/NXPrnBnW2KA)
 
 [where to buy](https://www.pandapi3d.com/)
