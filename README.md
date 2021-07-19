@@ -1,5 +1,5 @@
 
-Use esp32 as the mcu for 3D printer motherboard. 
+PandaZHU use ESP32 as the mcu for 3D printer motherboard. Zhu is Chinese for bamboo
 
 it has  larger memory and more powerful than normal 32bit 3D printer motherboard.
 
