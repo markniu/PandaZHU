@@ -19,7 +19,7 @@ temperature | support 3 thermistors (30degree~250degree)
 Bed leveling    | 	  BLtouch/ support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
 LCD   | 	LCD128*64/PandaTouchScreen/DGUS touch screen
 RJ11  |  for DGUS touch screen 
-Serial port chip   | 	CH340G	  
+Serial chip   | 	CH340G	  
 Input   | 	9~28V 20A max	
 heater Output   | 3 heaters,	15Amax for each heater (100A mosfet PSMN1R0-30YLC)	 
 stepper driver   |  8*(TMC2209/TMC2208/A4988)	 | Modular, replaceable 
