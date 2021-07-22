@@ -13,8 +13,7 @@ MCU | Two 32-bit MCU ,240MHz
 RAM |  520 KBytes SRAM |	
 ROM |  4M Bytes Flash memory
 EXGPIO | there are 24 more GPIOs(only as output) with a expander, the communication speed is 1.4MHz, and the actual speed of gpio output is 70kHz jitter free stepping that can drive the X/Y axis to speed 900mm/s .
-WiFi |  802.11 b/g/n/d/e/i/k/r (802.11n up to 150 Mbps)
-Bluetooth | Bluetooth v4.2
+WiFi |  802.11 b/g/n/d/e/i/k/r (802.11n up to 150 Mbps),Bluetooth v4.2
 temperature | support 3 thermistors (30degree~250degree)
 Bed leveling    | 	  BLtouch/ support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
 LCD   | 	LCD128*64/PandaTouchScreen/DGUS touch screen
@@ -22,7 +21,7 @@ RJ11  |  for DGUS touch screen
 Serial chip   | 	CH340G	  
 Input   | 	9~28V 20A max	
 heater Output   | 3 heaters,	15Amax for each heater (100A mosfet PSMN1R0-30YLC)	 
-stepper driver   |  8*(TMC2209/TMC2208/A4988)	 | Modular, replaceable 
+stepper driver   |  8 drviers(TMC2209/TMC2208/A4988),9 motor connectors(Z0_A and Z0_B are connected to the same driver)
 FAN | Support mixed use of 5V/24V fans,3 of them are controllabe fans
 Audio |  play music at boot, Error/alarm music..
 OS | Real-time operating systems (RTOS)
