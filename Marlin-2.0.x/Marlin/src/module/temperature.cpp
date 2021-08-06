@@ -1203,7 +1203,8 @@ XT_Wav_Class ForceWithYou(Force);     // create an object of type XT_Wav_Class t
 XT_DAC_Audio_Class DacAudio(25,3);    // Create the main player class object. 
                                       // Use GPIO 25, one of the 2 DAC pins and timer 0
 XT_Wav_Class ForceWithYou_alarm(alarm0); 
-       
+
+extern hw_timer_t * timer;      
   
 void audio_play(int times)
 {
@@ -1211,6 +1212,13 @@ void audio_play(int times)
 
    if(playCounter>80)
     return;
+   else if(playCounter==80)
+   {
+      DacAudio.StopAllSounds();
+      playCounter++;
+      timerAlarmDisable(timer); 
+      return;
+   }
    playCounter++;
    DacAudio.DacVolume=100;
   while(times--)

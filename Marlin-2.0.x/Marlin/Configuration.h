@@ -123,7 +123,7 @@
  * Currently Ethernet (-2) is only supported on Teensy 4.1 boards.
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT_2 2
+#define SERIAL_PORT_2 -1
 //#define BAUDRATE_2 250000   // Enable to override BAUDRATE
 
 /**
@@ -968,7 +968,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-#define BLTOUCH
+//#define BLTOUCH
 
 /**
  * Touch-MI Probe by hotends.fr
@@ -2393,9 +2393,9 @@
 
 
 //#define DGUS_LCD_UI_HIPRECY
-#define DGUS_LCD_UI_FYSETC
+//#define DGUS_LCD_UI_FYSETC
 //#define DGUS_LCD_UI_MKS
-//	#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+	#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 #if ENABLED(DGUS_LCD_UI_MKS)
   #define USE_MKS_GREEN_UI
 #endif
