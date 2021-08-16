@@ -43,6 +43,7 @@ Play audio | no | no | no | no | no | yes |yes
 Display | LCD12864 |LCD12864<br>Touchscreen |LCD12864<br>Touchscreen |LCD12864<br>Touchscreen  |no|LCD12864<br>Touchscreen|LCD12864<br>Touchscreen
 BLTOUCH | no | yes | yes | yes | no | yes |yes
 Wifi speed,Test by <br>  uploading file| 4KB/s <br> Wifi module|4KB/s <br> Wifi module| 4KB/s <br> Wifi module |4KB/s <br> Wifi module |>50KB/s<br>Native wifi|>50KB/s<br>Native wifi|>50KB/s<br>Native wifi
+Chip supply | in stock | shortage | shortage | shortage | in stock | in stock |in stock
 
 There is a lot of space to improve the wifi speed of ESP32 as MCU by optimizing the software.
 
