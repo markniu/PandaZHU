@@ -37,12 +37,14 @@ Frequency | 20 MHz |72 MHz| 180 MHz |168 MHz |240 MHz|240 MHz|240 MHz
 Flash | 128KB |256KB| 512KB |1MB |4MB|4MB|4MB
 RAM | 16KB |48KB| 128KB |196KB |520KB|520KB|520KB
 ADC | 10bit |12bit| 12bit |12bit |12bit|12bit|12bit
-Wifi speed | 4KB/s <br> Wifi module|4KB/s <br> Wifi module| 4KB/s <br> Wifi module |4KB/s <br> Wifi module |>50KB/s<br>Native wifi|>50KB/s<br>Native wifi|>50KB/s<br>Native wifi
 Heaters | 2 |2| 4 |2 |2|2|3
 Stepper drivers | 4 |4|8|4|4|4|8
 Play audio | no | no | no | no | no | yes |yes
 Display | LCD12864 |LCD12864<br>Touchscreen |LCD12864<br>Touchscreen |LCD12864<br>Touchscreen  |no|LCD12864<br>Touchscreen|LCD12864<br>Touchscreen
 BLTOUCH | no | yes | yes | yes | no | yes |yes
+Wifi speed,Test by <br>  uploading file| 4KB/s <br> Wifi module|4KB/s <br> Wifi module| 4KB/s <br> Wifi module |4KB/s <br> Wifi module |>50KB/s<br>Native wifi|>50KB/s<br>Native wifi|>50KB/s<br>Native wifi
+
+There is a lot of space to improve the wifi speed of ESP32 as MCU by optimizing the software.
 
 
 [Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
