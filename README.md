@@ -31,7 +31,7 @@ App | control printer, upload files with web browser ,[see more](https://github.
 ### Boards compare
  Name  |  Creality  | SKR MINI E3| SKR Octopus |  SKR E3 RRF | FYSETC E4 | PandaM4 | PandaZHU
 --- | --- |---| --- | --- | ---| ---| --- 
-MCU | Atmega1284 |STM32F103| STM32F446 |STM32F407 |ESP32|ESP32|ESP32
+MCU | Atmega<br>1284 |STM32F103| STM32F446 |STM32F407 |ESP32|ESP32|ESP32
 MCU Bits | 8bit |32bit| 32bit |32bit |32bit|32bit|32bit
 Frequency | 20 MHz |72 MHz| 180 MHz |168 MHz |240 MHz|240 MHz|240 MHz
 Flash | 128KB |256KB| 512KB |1MB |4MB|4MB|4MB
