@@ -45,7 +45,7 @@ BLTOUCH | no | yes | yes | yes | no | yes |yes
 Wifi speed,Test by <br>  uploading file| 4KB/s <br> Wifi module|4KB/s <br> Wifi module| 4KB/s <br> Wifi module |4KB/s <br> Wifi module |>50KB/s<br>Native wifi|>50KB/s<br>Native wifi|>50KB/s<br>Native wifi
 Chip supply | sufficient | shortage | shortage | shortage | sufficient | sufficient |sufficient
 
-There is a lot of space to improve the wifi speed of ESP32 as MCU by optimizing the software.
+There are still some space to improve the wifi speed of ESP32 as MCU by optimizing the software.
 
 
 [Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
