@@ -14,7 +14,7 @@ RAM |  520 KBytes SRAM |
 ROM |  4M Bytes Flash memory
 EXGPIO | there are 24 more GPIOs(only as output) with a expander, the communication speed is 1.4MHz, and the actual speed of gpio output is 70kHz jitter free stepping that can drive the X/Y axis to speed 900mm/s .
 WiFi |  802.11 b/g/n/d/e/i/k/r (802.11n up to 150 Mbps),Bluetooth v4.2
-temperature | support 3 thermistors (30degree~260degree)
+temperature | support 3 thermistors (30degree~280degree)
 Bed leveling    | 	  BLtouch/ support wild range voltage 5V~36V Inductive sensor NPN, since it have optocoupler.
 LCD   | 	LCD128*64/PandaTouchScreen/DGUS touch screen
 RJ11  |  for DGUS touch screen 
