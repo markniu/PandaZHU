@@ -34,7 +34,7 @@
 #include "ultralcd_st7920_u8glib_rrd_AVR.h"
 
 #if F_CPU >= 20000000
-  #define CPU_ST7920_DELAY_1   DELAY_NS(150)
+  #define CPU_ST7920_DELAY_1   DELAY_NS(151)
   #define CPU_ST7920_DELAY_2   DELAY_NS(10)
   #define CPU_ST7920_DELAY_3  DELAY_NS(1050)
 #elif MB(3DRAG, K8200, K8400)
