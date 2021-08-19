@@ -27,7 +27,7 @@
 #include <driver/adc.h>
 #include <esp_adc_cal.h>
 #include <HardwareSerial.h>
-
+#include <esp_task_wdt.h>
 #if ENABLED(WIFISUPPORT)
   #include <ESPAsyncWebServer.h>
   #include "wifi.h"
@@ -136,7 +136,7 @@ void Write_EXIO(unsigned char IO,unsigned char v)
 
 }
 void HAL_init_board() {
-
+   esp_task_wdt_init(10, true); //panda
   #if ENABLED(ESP3D_WIFISUPPORT)
     esp3dlib.init();
   #elif ENABLED(WIFISUPPORT)
@@ -175,7 +175,8 @@ void HAL_init_board() {
  // TERN_(I2S_STEPPER_STREAM, i2s_init());
   YSerial2.begin(460800*3,SERIAL_8N1, 16, 17);
  // YSerial2.setRxBufferSize(512);
- 
+
+
 YSerial2.write('\n');YSerial2.write('h');YSerial2.write('h');YSerial2.write('\n');
 SERIAL_ECHO_MSG("YSerial2 inited! ");
 }
@@ -249,6 +250,7 @@ void HAL_adc_init() {
 
     // Change attenuation 100mV below the calibrated threshold
     thresholds[i] = esp_adc_cal_raw_to_voltage(4095, &characteristics[i]);
+ //    SERIAL_ECHO_MSG("mv: ",thresholds[i]);
   }
 }
 
@@ -271,6 +273,9 @@ void HAL_adc_start_conversion(const uint8_t adc_pin) {
   else return;
 
   adc1_set_attenuation(chan, atten);
+
+ 
+
 }
 
 void analogWrite(pin_t pin, int value) {

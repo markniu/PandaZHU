@@ -1248,7 +1248,7 @@ void setup() {
 
   // UI must be initialized before EEPROM
   // (because EEPROM code calls the UI).
-SERIAL_ECHO_MSG("setup0: ");
+
 
   #if ENABLED(DWIN_CREALITY_LCD)
     delay(800);   // Required delay (since boot?)
@@ -1259,15 +1259,14 @@ SERIAL_ECHO_MSG("setup0: ");
   #else
     SETUP_RUN(ui.init());
   
-    SERIAL_ECHO_MSG("setup00: ");
     #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
       SETUP_RUN(ui.show_bootscreen());
       const millis_t bootscreen_ms = millis();
     #endif
-    SERIAL_ECHO_MSG("setup000: ");
+   
     SETUP_RUN(ui.reset_status());     // Load welcome message early. (Retained if no errors exist.)
   #endif
-SERIAL_ECHO_MSG("setup1: ");
+
   #if PIN_EXISTS(SAFE_POWER)
     #if HAS_DRIVER_SAFE_POWER_PROTECT
       SETUP_RUN(stepper_driver_backward_check());
@@ -1280,7 +1279,7 @@ SERIAL_ECHO_MSG("setup1: ");
   #if ENABLED(PROBE_TARE)
     SETUP_RUN(probe.tare_init());
   #endif
-SERIAL_ECHO_MSG("setup2: ");
+//SERIAL_ECHO_MSG("setup2: ");
   #if BOTH(SDSUPPORT, SDCARD_EEPROM_EMULATION)
     SETUP_RUN(card.mount());          // Mount media with settings before first_load
   #endif

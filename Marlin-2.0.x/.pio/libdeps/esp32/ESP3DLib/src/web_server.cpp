@@ -1516,6 +1516,7 @@ void Web_Server::SDFile_direct_upload()
 void Web_Server::handle()
 {
     static uint32_t timeout = millis();
+      esp_task_wdt_reset();//panda
 #ifdef CAPTIVE_PORTAL_FEATURE
     if(WiFi.getMode() == WIFI_AP) {
         dnsServer.processNextRequest();
