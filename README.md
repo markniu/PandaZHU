@@ -1,9 +1,16 @@
 
-PandaZHU use ESP32 as the mcu for 3D printer motherboard. Zhu is Chinese for bamboo
-
-it has  larger memory and more powerful than normal 32bit 3D printer motherboard.
-
-the file upload speed to sd card is also higher than it as a wifi module, it can support more motor drivers with one fast expand GPIO chip.
+PandaZHU use ESP32 as the MCU of motherboard for 3D printer.
+ 
+Powerful: 
+1. it has larger memory and more powerful than normal 32bit motherboard.Two 240MHz MCU,4MB memory
+2. support 8 motor drivers and three heaters with one fast expand GPIO chip.
+3. the speed of uploading gcode file is 10 times faster than it as a wifi module.
+4. play music(mp3/wav) when printer boot or printing finished...
+ 
+Easy to use: 
+1. upload marlin firmware through wifi with browser.
+2. upload gcode file, configure printer and control printer wireless with browser.
+ 
 
 ![](https://gitee.com/markyue/pandapi_wiki/raw/master/imges/esp/15090314.jpg)
 
