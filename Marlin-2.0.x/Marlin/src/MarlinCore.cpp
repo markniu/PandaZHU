@@ -1286,7 +1286,7 @@ void setup() {
 
   SETUP_RUN(settings.first_load());   // Load data from EEPROM if available (or use defaults)
                                       // This also updates variables in the planner, elsewhere
-SERIAL_ECHO_MSG("setup3: ");
+//SERIAL_ECHO_MSG("setup3: ");
   #if HAS_ETHERNET
     SETUP_RUN(ethernet.init());
   #endif
