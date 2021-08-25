@@ -12,7 +12,7 @@ Easy to use:
 2. upload gcode file, configure printer and control printer wireless with browser.
  
 
-![](https://gitee.com/markyue/pandapi_wiki/raw/master/imges/esp/15090314.jpg)
+![](https://gitee.com/markyue/pandapi_wiki/raw/master/imges/esp/2esp32.jpg)
 
 Items | Specifications  
 --- | --- 
