@@ -79,8 +79,8 @@ E1_ENABLE | 128 |None | |E2_ENABLE | 128 |None |
 E3_ENABLE | 128 |None | |E4_ENABLE | 128 |None |
 Heater Bed |  109 | 109 | |  Heater_Hotend0 |  108|  108
 Heater_Hotend1 |  123 | None  || |
-Fan0(model) |  118 |118 | | Fan1(model) | 119 |   
-Fan2(Hotend0/E0 Auto) | 120 | 120 | |   |  |   
+Fan0 |  118 |118 | | Fan1 | 119 |   
+Fan2 | 120 | 120 | |   |  |   
 Bed Thermistor |  36 |36 | | Hotend0 Thermistor |  39|  39
 Hotend1 Thermistor | 34  |None   | |  ||
 Filament Runout |  22 |22 || RGB light|  15|  15
