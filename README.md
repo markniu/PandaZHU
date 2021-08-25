@@ -69,20 +69,20 @@ X_Step | 101 |101 | | X_Dir | 100| 100
 Y_Step | 103 | 103 | | Y_Dir | 102| 102
 Z_Step | 105 | 105 | | Z_Dir | 104| 104
 E0_Step | 107 |107 | | E0_Dir | 106| 106
-E1_Step | 115 |  | | E1_Dir | 114| 114
-E2_Step | 112 |  | | E2_Dir | 113|  
-E3_Step | 110 |  | | E3_Dir | 111|  
-E4_Step | 121 |  | | E4_Dir | 122|  
+E1_Step | 115 | None | | E1_Dir | 114| 114
+E2_Step | 112 | None | | E2_Dir | 113|  None
+E3_Step | 110 |None  | | E3_Dir | 111|  None
+E4_Step | 121 |None  | | E4_Dir | 122|  None
 X_ENABLE | 128 |115 | |Y_ENABLE | 128 |114 |
 Z_ENABLE | 128 |113 | |E0_ENABLE | 128 |112 |
-E1_ENABLE | 128 | | |E2_ENABLE | 128 | |
-E3_ENABLE | 128 | | |E4_ENABLE | 128 | |
+E1_ENABLE | 128 |None | |E2_ENABLE | 128 |None |
+E3_ENABLE | 128 |None | |E4_ENABLE | 128 |None |
 Heater Bed |  109 | 109 | |  Heater_Hotend0 |  108|  108
-Heater_Hotend1 |  123 |   || |
+Heater_Hotend1 |  123 | None  || |
 Fan0(model) |  118 |118 | | Fan1(model) | 119 |   
 Fan2(Hotend0/E0 Auto) | 120 | 120 | |   |  |   
 Bed Thermistor |  36 |36 | | Hotend0 Thermistor |  39|  39
-Hotend1 Thermistor | 34  |   | |  ||
+Hotend1 Thermistor | 34  |None   | |  ||
 Filament Runout |  22 |22 || RGB light|  15|  15
 DHT11 | 13  |13  | |  ||   
 LCD_BTN | 32 |32 | | LCD_BTN1 | 33 | 33 
