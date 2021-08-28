@@ -115,7 +115,7 @@ tags
 *.su
 
 # PlatformIO files/dirs
-.pio/build
+.pio*
 .pioenvs
 .piolibdeps
 .clang_complete

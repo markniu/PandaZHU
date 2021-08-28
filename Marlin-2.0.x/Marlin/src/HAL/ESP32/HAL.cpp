@@ -27,7 +27,9 @@
 #include <driver/adc.h>
 #include <esp_adc_cal.h>
 #include <HardwareSerial.h>
+#if (MOTHERBOARD == BOARD_PANDA_ZHU)||(MOTHERBOARD == BOARD_PANDA_M4)
 #include <esp_task_wdt.h>
+#endif
 #if ENABLED(WIFISUPPORT)
   #include <ESPAsyncWebServer.h>
   #include "wifi.h"
@@ -89,41 +91,12 @@ volatile int numPWMUsed = 0,
   }
 
 #endif
+#if (MOTHERBOARD == BOARD_PANDA_ZHU)||(MOTHERBOARD == BOARD_PANDA_M4)
 HardwareSerial YSerial2(2);
-  int x=-1;
-  char write_flag=0;
-bool Read_EXIO(unsigned char IO)
-{
-   // YSerial2.flush();
-   // while(write_flag);
-   // write_flag=1;
-   //  YSerial2.write(0x40|(IO-100));
-    //write_flag=0;
-    // while(!YSerial2.available());
-   
-  //   x=YSerial2.read();  
-   //  return x?1:0;
-    return digitalRead(IO);//((x>>(IO-100))&0x01)?1:0; 
-     
-}
-extern int isr_flag;
+ 
 void Write_EXIO(unsigned char IO,unsigned char v)
 {
-/*  if(isr_flag)
-  {
-    while(isr_flag--);
-    {
-      ets_delay_us(1000);
-      
-    }
-     DISABLE_ISRS();
-    YSerial2.write(0x80|(((char)v)<<5)|(IO-100));  
-    ENABLE_ISRS();
-    return;
-  }*/
-    //   delay(1);
-    
-   // YSerial2.flush();
+
     if(ISRS_ENABLED()) 
     {
         DISABLE_ISRS();
@@ -132,11 +105,13 @@ void Write_EXIO(unsigned char IO,unsigned char v)
     }
     else
       YSerial2.write(0x80|(((char)v)<<5)|(IO-100));  
-   // if(YSerial2.available())
-
+   
 }
+#endif
 void HAL_init_board() {
+#if (MOTHERBOARD == BOARD_PANDA_ZHU)||(MOTHERBOARD == BOARD_PANDA_M4)
    esp_task_wdt_init(10, true); //panda
+#endif   
   #if ENABLED(ESP3D_WIFISUPPORT)
     esp3dlib.init();
   #elif ENABLED(WIFISUPPORT)
@@ -172,13 +147,17 @@ void HAL_init_board() {
   // Initialize the i2s peripheral only if the I2S stepper stream is enabled.
   // The following initialization is performed after Serial1 and Serial2 are defined as
   // their native pins might conflict with the i2s stream even when they are remapped.
- // TERN_(I2S_STEPPER_STREAM, i2s_init());
-  YSerial2.begin(460800*3,SERIAL_8N1, 16, 17);
- // YSerial2.setRxBufferSize(512);
+#if (MOTHERBOARD == BOARD_PANDA_ZHU)||(MOTHERBOARD == BOARD_PANDA_M4)
+   YSerial2.begin(460800*3,SERIAL_8N1, 16, 17);
+#else
+  TERN_(I2S_STEPPER_STREAM, i2s_init());
+#endif
+
+  
+ 
 
 
-YSerial2.write('\n');YSerial2.write('h');YSerial2.write('h');YSerial2.write('\n');
-SERIAL_ECHO_MSG("YSerial2 inited! ");
+
 }
 
 void HAL_idletask() {

@@ -856,7 +856,7 @@ void kill(PGM_P const lcd_error/*=nullptr*/, PGM_P const lcd_component/*=nullptr
 
   minkill(steppers_off);
 }
-extern void alarm_play(int times);
+extern void alarm_play(int times);//PANDA
 void minkill(const bool steppers_off/*=false*/) {
 
   // Wait a short time (allows messages to get out before shutting down.
@@ -869,7 +869,7 @@ void minkill(const bool steppers_off/*=false*/) {
 
   // Reiterate heaters off
   thermalManager.disable_all_heaters();
-  alarm_play(100);
+  alarm_play(100);//PANDA
   TERN_(HAS_CUTTER, cutter.kill());  // Reiterate cutter shutdown
 
   // Power off all steppers (for M112) or just the E steppers
@@ -1062,8 +1062,6 @@ inline void tmc_standby_setup() {
  *  - Set Marlin to RUNNING State
  */
 void setup() {
-
-
   #ifdef BOARD_PREINIT
     BOARD_PREINIT(); // Low-level init (before serial init)
   #endif
@@ -1083,10 +1081,6 @@ void setup() {
   #define SETUP_RUN(C) do{ SETUP_LOG(STRINGIFY(C)); C; }while(0)
 
   MYSERIAL1.begin(BAUDRATE);
-  //SERIAL_ECHOLNPGM("send_play");
-  
-
-  //SERIAL_ECHOLNPGM("send_play1");
   millis_t serial_connect_timeout = millis() + 1000UL;
   while (!MYSERIAL1.connected() && PENDING(millis(), serial_connect_timeout)) { /*nada*/ }
 
@@ -1249,7 +1243,6 @@ void setup() {
   // UI must be initialized before EEPROM
   // (because EEPROM code calls the UI).
 
-
   #if ENABLED(DWIN_CREALITY_LCD)
     delay(800);   // Required delay (since boot?)
     SERIAL_ECHOPGM("\nDWIN handshake ");
@@ -1258,12 +1251,10 @@ void setup() {
     DWIN_UpdateLCD();     // Show bootscreen (first image)
   #else
     SETUP_RUN(ui.init());
-  
     #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
       SETUP_RUN(ui.show_bootscreen());
       const millis_t bootscreen_ms = millis();
     #endif
-   
     SETUP_RUN(ui.reset_status());     // Load welcome message early. (Retained if no errors exist.)
   #endif
 
@@ -1279,14 +1270,14 @@ void setup() {
   #if ENABLED(PROBE_TARE)
     SETUP_RUN(probe.tare_init());
   #endif
-//SERIAL_ECHO_MSG("setup2: ");
+
   #if BOTH(SDSUPPORT, SDCARD_EEPROM_EMULATION)
     SETUP_RUN(card.mount());          // Mount media with settings before first_load
   #endif
 
   SETUP_RUN(settings.first_load());   // Load data from EEPROM if available (or use defaults)
                                       // This also updates variables in the planner, elsewhere
-//SERIAL_ECHO_MSG("setup3: ");
+
   #if HAS_ETHERNET
     SETUP_RUN(ethernet.init());
   #endif
@@ -1298,7 +1289,7 @@ void setup() {
   TERN_(HAS_M206_COMMAND, current_position += home_offset); // Init current position based on home_offset
 
   sync_plan_position();               // Vital to init stepper/planner equivalent for current_position
-SERIAL_ECHO_MSG("setup4: ");
+
   SETUP_RUN(thermalManager.init());   // Initialize temperature loop
 
   SETUP_RUN(print_job_timer.init());  // Initial setup of print job timer
@@ -1306,7 +1297,6 @@ SERIAL_ECHO_MSG("setup4: ");
   SETUP_RUN(endstops.init());         // Init endstops and pullups
 
   SETUP_RUN(stepper.init());          // Init stepper. This enables interrupts!
-SERIAL_ECHO_MSG("setup5: ");
 
   #if HAS_SERVOS
     SETUP_RUN(servo_init());
@@ -1319,7 +1309,7 @@ SERIAL_ECHO_MSG("setup5: ");
   #if HAS_PHOTOGRAPH
     OUT_WRITE(PHOTOGRAPH_PIN, LOW);
   #endif
-SERIAL_ECHO_MSG("setup55: ");
+
   #if HAS_CUTTER
     SETUP_RUN(cutter.init());
   #endif
@@ -1335,7 +1325,6 @@ SERIAL_ECHO_MSG("setup55: ");
     SETUP_RUN(endstops.enable_z_probe(false));
   #endif
 
-SERIAL_ECHO_MSG("setup550: ");
   #if HAS_STEPPER_RESET
     SETUP_RUN(enableStepperDrivers());
   #endif
@@ -1466,7 +1455,6 @@ SERIAL_ECHO_MSG("setup550: ");
     SETUP_RUN(bltouch.init(/*set_voltage=*/true));
   #endif
 
-SERIAL_ECHO_MSG("setup551: ");
   #if ENABLED(I2C_POSITION_ENCODERS)
     SETUP_RUN(I2CPEM.init());
   #endif
@@ -1501,7 +1489,7 @@ SERIAL_ECHO_MSG("setup551: ");
   #elif ENABLED(ELECTROMAGNETIC_SWITCHING_TOOLHEAD)
     SETUP_RUN(est_init());
   #endif
-//SERIAL_ECHO_MSG("setup6: ");
+
   #if ENABLED(USE_WATCHDOG)
     SETUP_RUN(watchdog_init());       // Reinit watchdog after HAL_get_reset_source call
   #endif
@@ -1563,7 +1551,7 @@ SERIAL_ECHO_MSG("setup551: ");
     #endif
     SETUP_RUN(tft_lvgl_init());
   #endif
-SERIAL_ECHO_MSG("setup7: ");
+
   #if BOTH(HAS_WIRED_LCD, SHOW_BOOTSCREEN)
     const millis_t elapsed = millis() - bootscreen_ms;
     #if ENABLED(MARLIN_DEV_MODE)
@@ -1579,10 +1567,10 @@ SERIAL_ECHO_MSG("setup7: ");
   #if BOTH(HAS_LCD_MENU, TOUCH_SCREEN_CALIBRATION) && EITHER(TFT_CLASSIC_UI, TFT_COLOR_UI)
     ui.check_touch_calibration();
   #endif
-SERIAL_ECHO_MSG("setup8: ");
 
   marlin_state = MF_RUNNING;
-  
+
+  SETUP_LOG("setup() completed.");
 }
 
 

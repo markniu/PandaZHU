@@ -90,9 +90,13 @@
 // Heaters / Fans
 //
 #define HEATER_0_PIN                           100+8
-#define FAN_PIN                                100+16+2
+#define HEATER_1_PIN                           123
 #define HEATER_BED_PIN                         100+8+1
-#define E0_AUTO_FAN_PIN_ESP                    100+16+4
+
+#define FAN_PIN                                100+16+2 // this is the FAN0 and FAN0_5V on the board.  M106: Set Fan Speed 0~255, E.g "M106 P0 S255"
+#define FAN1_PIN                               100+16+3 // this is the FAN1 on the board.              M106: Set Fan Speed 0~255,M107: Fan Off. E.g "M106 P1 S255"
+#define E0_AUTO_FAN_PIN_ESP                    100+16+4 // this is the FAN2 on the board.and used to cool the hotend0.it will be opened automatically if the temperature of Hotend0 is higher than 50°C which is configured in the configuration_adv.h.EXTRUDER_AUTO_FAN_TEMPERATURE,E0_AUTO_FAN_PIN_ESP.
+
 //
 // MicroSD card
 //
