@@ -57,8 +57,6 @@ There are still some space to improve the wifi speed of ESP32 as MCU by optimizi
 
 [Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
 
-### Flashing firmware
-To flash firmware by directly connecting to your computer with usb line,you will need to insert the sd card to the sdcard slot on the board.before that you should install and compile firmware,[see more](https://github.com/markniu/PandaZHU/wiki/Compile&Flash-firmware)
 
 ### PinMap
 Name |  PandaZHU_PIN | PandaM4_PIN  ||Name |  PandaZHU_PIN | PandaM4_PIN 
