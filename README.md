@@ -55,8 +55,6 @@ Chip supply | sufficient | shortage | shortage | shortage | sufficient | suffici
 There are still some space to improve the wifi speed of ESP32 as MCU by optimizing the software.
 
 
-[Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
-
 
 ### PinMap
 Name |  PandaZHU_PIN | PandaM4_PIN  ||Name |  PandaZHU_PIN | PandaM4_PIN 
@@ -91,6 +89,8 @@ SD_MOSI | 23 |23 | | SD_MISO | 19| 19
 SD_SCK | 18 |18 | | SDSS | 5| 5
 SD_DETECT | 2 |2 | |  | |
 SPEAKER | 25 |25 | |  ||
+
+[Wiki Guides](https://github.com/markniu/PandaZHU/wiki)
 
 [test video](https://youtu.be/NXPrnBnW2KA)
 
