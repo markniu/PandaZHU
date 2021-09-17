@@ -94,4 +94,7 @@ SPEAKER | 25 |25 | |  ||
 
 [test video](https://youtu.be/NXPrnBnW2KA)
 
-[Support me by buying](https://www.pandapi3d.com/)
+[where to buy](https://www.pandapi3d.com/)
+
+### [Facebook Support](https://www.facebook.com/groups/380795976169477/)
+
