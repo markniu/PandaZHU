@@ -7,7 +7,7 @@ Powerful:
 3. the speed of uploading gcode file is 10 times faster than it as a wifi module.
 4. play music(mp3/wav) when printer boot or printing finished...
  
-Easy to use: 
+Easy to use with [ESP3D](https://github.com/luc-github/ESP3DLib): 
 1. upload marlin firmware through wifi with browser.
 2. upload gcode file, configure printer and control printer wireless with browser.
  
