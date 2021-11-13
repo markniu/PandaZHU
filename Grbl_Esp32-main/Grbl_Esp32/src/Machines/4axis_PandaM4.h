@@ -72,8 +72,7 @@
 #define COOLANT_MIST_PIN        118
 
 #else
-//#define X_STEP_PIN                          100+16+3
-//#define X_DIR_PIN                           100+16+2
+ 
 
 #define X_STEP_PIN              100+16+3
 #define X_DIRECTION_PIN         100+16+2
