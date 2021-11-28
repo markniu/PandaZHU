@@ -51,8 +51,8 @@
 #define SPINDLE_TYPE            SpindleType::PWM // only one spindle at a time
 */
 
-#define SPINDLE_OUTPUT_PIN      0
-#define SPINDLE_ENABLE_PIN      22
+#define SPINDLE_OUTPUT_PIN      22
+//#define SPINDLE_ENABLE_PIN      22
 
 
 #define SPINDLE_TYPE            SpindleType::PWM // only one spindle at a time
