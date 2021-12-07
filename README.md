@@ -6,7 +6,8 @@ Powerful:
 2. support 8 motor drivers and three heaters (PandaZHU) with one fast expand GPIO chip.
 3. the speed of uploading gcode file is 10 times faster than it as a wifi module.
 4. play music(mp3/wav) when printer boot or printing finished...
- 
+5. Not only Marlin, we can run [Grbl_ESP32](https://github.com/markniu/PandaZHU/wiki/Run-Laser-CNC,Grbl_ESP32) (CNC controller) 
+
 Easy to use with [ESP3D](https://github.com/luc-github/ESP3DLib): 
 1. upload marlin firmware through wifi with browser.
 2. upload gcode file, configure printer and control printer wireless with browser.
