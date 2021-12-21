@@ -1,12 +1,12 @@
 
-PandaZHU/M4 use ESP32 as the MCU of motherboard for 3D printer.while PandaM4 is designed for drop in Creality ender printer.
+PandaZHU/M4 use ESP32 as the MCU for 3D printer.while PandaM4 is designed for drop in Creality ender printer.
  
 Powerful: 
 1. it has larger memory and more powerful than normal 32bit motherboard.Two 240MHz MCU,4MB memory
 2. support 8 motor drivers and three heaters (PandaZHU) with one fast expand GPIO chip.
 3. the speed of uploading gcode file is 10 times faster than it as a wifi module.
 4. play music(mp3/wav) when printer boot or printing finished...
-5. Not only Marlin, we can run [Grbl_ESP32](https://github.com/markniu/PandaZHU/wiki/Run-Laser-CNC,Grbl_ESP32) (CNC controller) 
+5. Not only Marlin, you can easily run [Grbl_ESP32](https://github.com/markniu/PandaZHU/wiki/Run-Laser-CNC,Grbl_ESP32) (CNC controller) 
 
 Easy to use with [ESP3D](https://github.com/luc-github/ESP3DLib): 
 1. upload marlin firmware through wifi with browser.
