@@ -1,7 +1,7 @@
 
 PandaZHU/M4 use ESP32 as the MCU for 3D printer.while PandaM4 is designed for drop in Creality ender printer.
 
-With ESP32 as the MCU for 3D printer,not only fast MCU speed,large memory than all the STM32bit board,you can upload file, firmware over the air,there will be more possible.
+With ESP32 for 3D printer,not only fast MCU speed,large memory than all the STM32bit board,you can upload file, firmware over the air and more possible.
 
 Powerful: 
 1. it has larger memory and more powerful than normal 32bit motherboard.Two 240MHz MCU,4MB memory
