@@ -115,4 +115,18 @@
 #define LCD_PINS_RS                    27
 #define LCD_PINS_ENABLE                26
 #define LCD_PINS_D4                    14
-    
+ #if HAS_TMC_UART
+  //
+  // TMC2209 stepper drivers
+  //
+
+  //
+  // Hardware serial 1
+  //
+  #define X_HARDWARE_SERIAL              MYSERIAL1
+  #define Y_HARDWARE_SERIAL              MYSERIAL1
+  #define Z_HARDWARE_SERIAL              MYSERIAL1
+  #define E0_HARDWARE_SERIAL             MYSERIAL1
+
+  #define TMC_BAUD_RATE 115200
+#endif   
