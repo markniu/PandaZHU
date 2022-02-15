@@ -21,7 +21,7 @@
   You should have received a copy of the GNU General Public License
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#include <esp_ota_ops.h>
 #include "Grbl.h"
 
 // Allow iteration over CoordIndex values
@@ -546,6 +546,18 @@ Error gc_execute_line(char* line, uint8_t client) {
                     case 68:
                         gc_block.modal.io_control = IoControl::SetAnalogImmediate;
                         mg_word_bit               = ModalGroup::MM10;
+                        break;
+                   case 130:// PandaZHU M130 for switch firmware
+                   {
+                          size_t flashsize = 0;
+                            const esp_partition_t* mainpartition = esp_ota_get_running_partition();
+                            if (mainpartition) {
+                                const esp_partition_t* partition = esp_ota_get_next_update_partition(mainpartition);
+                                if (partition) {
+                                    esp_ota_set_boot_partition(partition);
+                                }
+                            }
+                   }
                         break;
                     default:
                         FAIL(Error::GcodeUnsupportedCommand);  // [Unsupported M command]

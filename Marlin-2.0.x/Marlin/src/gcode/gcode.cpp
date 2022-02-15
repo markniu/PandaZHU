@@ -31,7 +31,7 @@ GcodeSuite gcode;
 #if ENABLED(WIFI_CUSTOM_COMMAND)
   extern bool wifi_custom_command(char * const command_ptr);
 #endif
-
+#include <esp_ota_ops.h>
 #include "parser.h"
 #include "queue.h"
 #include "../module/motion.h"
@@ -612,7 +612,18 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 119: M119(); break;                                    // M119: Report endstop states
       case 120: M120(); break;                                    // M120: Enable endstops
       case 121: M121(); break;                                    // M121: Disable endstops
-
+      case 130://PandaZHU M130 for switch firmware
+      {
+        size_t flashsize = 0;
+        const esp_partition_t* mainpartition = esp_ota_get_running_partition();
+        if (mainpartition) {
+            const esp_partition_t* partition = esp_ota_get_next_update_partition(mainpartition);
+            if (partition) {
+                esp_ota_set_boot_partition(partition);
+            }
+        }
+      }
+      break;
       #if PREHEAT_COUNT
         case 145: M145(); break;                                  // M145: Set material heatup parameters
       #endif
