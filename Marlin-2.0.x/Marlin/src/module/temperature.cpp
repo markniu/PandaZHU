@@ -2055,6 +2055,188 @@ void Temperature::updateTemperaturesFromRawValues() {
   #define INIT_CHAMBER_AUTO_FAN_PIN(P) SET_OUTPUT(P)
 #endif
 
+#if PANDA_BED
+
+#define I2C_READ 1
+#define I2C_WRITE 0
+#define DELAY 100 // usec delay
+#define BUFFER_LENGTH 32
+#define I2C_MAXWAIT 5000
+#define I2C_7BITADDR 0x3C// DS1307
+#define MEMLOC 0x0A
+#define ADDRLEN 1
+uint8_t  _sda=15 ;
+uint8_t  _scl =13 ;
+uint8_t  _pullup =true ;
+bool  i2c_write(uint8_t value);
+//void  i2c_stop(void);
+
+//#define setLow(pin) {if (_pullup)  digitalWrite(pin, LOW); pinMode(pin, OUTPUT);}
+void    setLow(uint8_t pin) {
+      noInterrupts();
+       pinMode(pin, OUTPUT);
+   // if (_pullup) 
+      digitalWrite(pin, LOW);
+    
+
+    interrupts();
+}
+
+//#define setHigh(pin) {if (_pullup)  pinMode(pin, INPUT_PULLUP); else pinMode(pin, INPUT);}
+//#define i2c_start(addr)  {setLow(_sda);delayMicroseconds(DELAY); setLow(_scl);return i2c_write(addr);}
+//#define i2c_stop() {setLow(_sda); delayMicroseconds(DELAY); setHigh(_scl);  delayMicroseconds(DELAY); setHigh(_sda);delayMicroseconds(DELAY);}
+
+
+void   setHigh(uint8_t pin) {
+ // digitalWrite(pin,1);
+ // return;
+     noInterrupts();
+    //if (_pullup) 
+      pinMode(pin, INPUT_PULLUP);
+   // else
+   //   pinMode(pin, INPUT);
+
+     interrupts();
+}
+bool  i2c_init(void) {
+  digitalWrite(_sda, LOW);
+  digitalWrite(_scl, LOW);
+  setHigh(_sda);
+  setHigh(_scl);
+  if (digitalRead(_sda) == LOW || digitalRead(_scl) == LOW) return false;
+  return true;
+}
+
+// Start transfer function: <addr> is the 8-bit I2C address (including the R/W
+// bit). 
+// Return: true if the slave replies with an "acknowledge", false otherwise
+
+bool  i2c_start(uint8_t addr) {
+  setLow(_sda);
+  delayMicroseconds(DELAY);
+  setLow(_scl);
+  return i2c_write(addr);
+}
+
+// Try to start transfer until an ACK is returned
+/*  i2c_start_wait(uint8_t addr) {
+  long retry = I2C_MAXWAIT;
+  while (!i2c_start(addr)) {
+    i2c_stop();
+    if (--retry == 0) return false;
+  }
+  return true;
+}
+*/
+// Repeated start function: After having claimed the bus with a start condition,
+// you can address another or the same chip again without an intervening 
+// stop condition.
+// Return: true if the slave replies with an "acknowledge", false otherwise
+bool  i2c_rep_start(uint8_t addr) {
+  setHigh(_sda);
+  setHigh(_scl);
+  delayMicroseconds(DELAY);
+  return i2c_start(addr);
+}
+
+// Issue a stop condition, freeing the bus.
+
+void  i2c_stop(void) {
+  setLow(_sda);
+  delayMicroseconds(DELAY);
+  setHigh(_scl);
+  delayMicroseconds(DELAY);
+  setHigh(_sda);
+  delayMicroseconds(DELAY);
+}
+
+// Write one byte to the slave chip that had been addressed
+// by the previous start call. <value> is the byte to be sent.
+// Return: true if the slave replies with an "acknowledge", false otherwise
+bool  i2c_write(uint8_t value) {
+  for (uint8_t curr = 0X80; curr != 0; curr >>= 1) {
+    if (curr & value) {setHigh(_sda);} else  setLow(_sda); 
+    setHigh(_scl);
+    delayMicroseconds(DELAY);
+    setLow(_scl);
+    delayMicroseconds(DELAY);
+  }
+  // get Ack or Nak
+  setHigh(_sda);
+  setHigh(_scl);
+  delayMicroseconds(DELAY);
+  uint8_t ack = digitalRead(_sda);
+  setLow(_scl);
+  delayMicroseconds(DELAY);  
+  setLow(_sda);
+  return ack == 0;
+}
+
+// Read one byte. If <last> is true, we send a NAK after having received 
+// the byte in order to terminate the read sequence. 
+uint8_t  i2c_read(bool last) {
+  uint8_t b = 0;
+  setHigh(_sda);
+  for (uint8_t i = 0; i < 8; i++) {
+    b <<= 1;
+    delayMicroseconds(DELAY);
+    setHigh(_scl);
+    delayMicroseconds(DELAY);
+    if (digitalRead(_sda)) b |= 1;
+    setLow(_scl);
+  }
+  if (last) {setHigh(_sda);} else setLow(_sda);
+  setHigh(_scl);
+  delayMicroseconds(DELAY);
+  setLow(_scl);
+  delayMicroseconds(DELAY);  
+  setLow(_sda);
+  return b;
+}
+
+
+void Temperature::I2C_send_str(char *dat_r,char send_now)
+{
+  int i=0;
+  i2c_stop();
+ // static unsigned long timeout = millis() + 100;
+ // if(((long)(millis() - timeout) > 0L)||(send_now))
+  {
+  //  timeout=millis() + 100;
+    if(i2c_start((I2C_7BITADDR<<1)|I2C_WRITE))
+    {
+      i2c_write(0x00);
+    // i2c_rep_start((I2C_7BITADDR<<1)|I2C_WRITE);
+      while(*dat_r)
+        i2c_write(*dat_r++);
+    }
+    i2c_stop();
+  }
+    
+  
+}
+
+void Temperature::I2C_read_str(char *dat_r)
+{
+  i2c_stop(); 
+  if(i2c_start((I2C_7BITADDR<<1)|I2C_WRITE))
+  {
+    int i =0;
+    i2c_write(0x00);
+    i2c_rep_start((I2C_7BITADDR<<1)|I2C_READ);
+    while(i<=50)
+    {
+      dat_r[i]= i2c_read(false);
+      if(dat_r[i]==0)
+        break;
+      i++;
+    }
+    i2c_read(true);
+    
+  }
+  i2c_stop();
+}
+#endif
 /**
  * Initialize the temperature manager
  *
@@ -2074,7 +2256,9 @@ void Temperature::updateTemperaturesFromRawValues() {
  *  - Init temp_range[], used for catching min/maxtemp
  */
 void Temperature::init() {
-
+#if PANDA_BED
+   i2c_init();
+#endif   
   TERN_(PROBING_HEATERS_OFF, paused_for_probing = false);
 
   #if BOTH(PIDTEMP, PID_EXTRUSION_SCALING)

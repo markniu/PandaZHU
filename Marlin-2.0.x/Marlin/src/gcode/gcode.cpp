@@ -26,6 +26,7 @@
  */
 
 #include "gcode.h"
+ #include "../module/temperature.h"
 GcodeSuite gcode;
 
 #if ENABLED(WIFI_CUSTOM_COMMAND)
@@ -300,6 +301,14 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
     case 'G': switch (parser.codenum) {
 
       case 0: case 1:                                             // G0: Fast Move, G1: Linear Move
+#if PANDA_BED
+     // MYSERIAL1.println(parser.command_ptr);
+        char tmp[72];
+        sprintf(tmp,"%s\n",parser.command_ptr);
+        thermalManager.I2C_send_str(tmp,0);
+        
+        //  I2C_send_str(parser.command_ptr);
+#endif		
         G0_G1(TERN_(HAS_FAST_MOVES, parser.codenum == 0)); break;
 
       #if ENABLED(ARC_SUPPORT) && DISABLED(SCARA)
@@ -525,7 +534,15 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 109: M109(); break;                                  // M109: Wait for hotend temperature to reach target
       #endif
 
-      case 105: M105(); return;                                   // M105: Report Temperatures (and say "ok")
+      case 105:
+       M105(); 
+#if PANDA_BED       
+       char tmp_1[120];
+       thermalManager.I2C_read_str(tmp_1);
+     //  I2C_read_str(tmp_1);
+       MYSERIAL1.printf(tmp_1);
+#endif        
+       return;                                   // M105: Report Temperatures (and say "ok")
 
       #if HAS_FAN
         case 106: M106(); break;                                  // M106: Fan On
@@ -551,7 +568,13 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       #endif
 
       #if HAS_HEATED_BED
-        case 140: M140(); break;                                  // M140: Set bed temperature
+        case 140:
+#if PANDA_BED         
+          char tmp[72];
+          sprintf(tmp,"%s\n",parser.command_ptr);
+          thermalManager.I2C_send_str(tmp,1);
+#endif          
+         M140(); break;                                  // M140: Set bed temperature
         case 190: M190(); break;                                  // M190: Wait for bed temperature to reach target
       #endif
 
