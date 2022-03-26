@@ -32,6 +32,10 @@
 
 #define SERVO0_PIN                       0
 
+#if PANDA_BED
+#define  PANDA_BED_SDA  15  
+#define  PANDA_BED_SCL  13  
+#endif
 
 //
 // Limit Switches

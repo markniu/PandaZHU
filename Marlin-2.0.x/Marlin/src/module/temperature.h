@@ -24,7 +24,7 @@
 /**
  * temperature.h - temperature controller
  */
-
+#include "Panda_segmentBed_I2C.h"
 #include "thermistor/thermistors.h"
 
 #include "../inc/MarlinConfig.h"
@@ -416,10 +416,7 @@ class Temperature {
       static heater_idle_t heater_idle[NR_HEATER_IDLE];
 
     #endif
-#if PANDA_BED    
-void  I2C_read_str(char *dat_r);
-void  I2C_send_str(char *dat_r,char send_now);
-#endif
+
   private:
 
     #if ENABLED(WATCH_HOTENDS)
@@ -958,3 +955,7 @@ void  I2C_send_str(char *dat_r,char send_now);
 };
 
 extern Temperature thermalManager;
+#if PANDA_BED
+extern  I2C_SegmentBED I2CsegmentBED;
+#endif
+

@@ -36,6 +36,9 @@
 #include "planner.h"
 #include "Arduino.h"
 #include <SoftwareSerial.h>
+#if PANDA_BED
+  #include <Panda_segmentBed_I2C.h>
+#endif
 //void WRITE_HEATER_BED(unsigned char v) ;
 #if EITHER(HAS_COOLER, LASER_COOLANT_FLOW_METER)
   #include "../feature/cooler.h"
@@ -224,6 +227,9 @@
 #endif
 
 Temperature thermalManager;
+#if PANDA_BED
+  I2C_SegmentBED I2CsegmentBED;
+#endif
 
 const char str_t_thermal_runaway[] PROGMEM = STR_T_THERMAL_RUNAWAY,
            str_t_heating_failed[] PROGMEM = STR_T_HEATING_FAILED;
@@ -1959,8 +1965,27 @@ void Temperature::updateTemperaturesFromRawValues() {
     HOTEND_LOOP() temp_hotend[e].celsius = analog_to_celsius_hotend(temp_hotend[e].raw, e);
   #endif
   TERN_(TEMP_SENSOR_1_AS_REDUNDANT, temp_redundant.celsius = analog_to_celsius_hotend(temp_redundant.raw, 1));
-
+#if PANDA_BED
+ // read bed temperature from i2c
+ static millis_t timeout_bed=0;
+ if((millis()-timeout_bed)>500)//500ms
+ {
+    char tmp_1[64];
+    celsius_float_t I2C_temp;
+    memset(tmp_1,0,sizeof(tmp_1));
+    I2CsegmentBED.I2C_read_str(tmp_1,1);//read one heating temperature.
+    I2C_temp=atof(tmp_1);
+    if(I2C_temp>2&&I2C_temp<200)
+    {
+        TERN_(HAS_HEATED_BED,   temp_bed.celsius     = atof(tmp_1));
+    }
+    timeout_bed=millis();
+ }
+ ///parse the temperature. https://blog.csdn.net/weixin_44189994/article/details/105188648
+ //temp_bed.celsius     = 
+#else
   TERN_(HAS_HEATED_BED,   temp_bed.celsius     = analog_to_celsius_bed(temp_bed.raw));
+#endif  
   TERN_(HAS_TEMP_CHAMBER, temp_chamber.celsius = analog_to_celsius_chamber(temp_chamber.raw));
   TERN_(HAS_TEMP_COOLER,  temp_cooler.celsius  = analog_to_celsius_cooler(temp_cooler.raw));
   TERN_(HAS_TEMP_PROBE,   temp_probe.celsius   = analog_to_celsius_probe(temp_probe.raw));
@@ -2055,188 +2080,7 @@ void Temperature::updateTemperaturesFromRawValues() {
   #define INIT_CHAMBER_AUTO_FAN_PIN(P) SET_OUTPUT(P)
 #endif
 
-#if PANDA_BED
 
-#define I2C_READ 1
-#define I2C_WRITE 0
-#define DELAY 100 // usec delay
-#define BUFFER_LENGTH 32
-#define I2C_MAXWAIT 5000
-#define I2C_7BITADDR 0x3C// DS1307
-#define MEMLOC 0x0A
-#define ADDRLEN 1
-uint8_t  _sda=15 ;
-uint8_t  _scl =13 ;
-uint8_t  _pullup =true ;
-bool  i2c_write(uint8_t value);
-//void  i2c_stop(void);
-
-//#define setLow(pin) {if (_pullup)  digitalWrite(pin, LOW); pinMode(pin, OUTPUT);}
-void    setLow(uint8_t pin) {
-      noInterrupts();
-       pinMode(pin, OUTPUT);
-   // if (_pullup) 
-      digitalWrite(pin, LOW);
-    
-
-    interrupts();
-}
-
-//#define setHigh(pin) {if (_pullup)  pinMode(pin, INPUT_PULLUP); else pinMode(pin, INPUT);}
-//#define i2c_start(addr)  {setLow(_sda);delayMicroseconds(DELAY); setLow(_scl);return i2c_write(addr);}
-//#define i2c_stop() {setLow(_sda); delayMicroseconds(DELAY); setHigh(_scl);  delayMicroseconds(DELAY); setHigh(_sda);delayMicroseconds(DELAY);}
-
-
-void   setHigh(uint8_t pin) {
- // digitalWrite(pin,1);
- // return;
-     noInterrupts();
-    //if (_pullup) 
-      pinMode(pin, INPUT_PULLUP);
-   // else
-   //   pinMode(pin, INPUT);
-
-     interrupts();
-}
-bool  i2c_init(void) {
-  digitalWrite(_sda, LOW);
-  digitalWrite(_scl, LOW);
-  setHigh(_sda);
-  setHigh(_scl);
-  if (digitalRead(_sda) == LOW || digitalRead(_scl) == LOW) return false;
-  return true;
-}
-
-// Start transfer function: <addr> is the 8-bit I2C address (including the R/W
-// bit). 
-// Return: true if the slave replies with an "acknowledge", false otherwise
-
-bool  i2c_start(uint8_t addr) {
-  setLow(_sda);
-  delayMicroseconds(DELAY);
-  setLow(_scl);
-  return i2c_write(addr);
-}
-
-// Try to start transfer until an ACK is returned
-/*  i2c_start_wait(uint8_t addr) {
-  long retry = I2C_MAXWAIT;
-  while (!i2c_start(addr)) {
-    i2c_stop();
-    if (--retry == 0) return false;
-  }
-  return true;
-}
-*/
-// Repeated start function: After having claimed the bus with a start condition,
-// you can address another or the same chip again without an intervening 
-// stop condition.
-// Return: true if the slave replies with an "acknowledge", false otherwise
-bool  i2c_rep_start(uint8_t addr) {
-  setHigh(_sda);
-  setHigh(_scl);
-  delayMicroseconds(DELAY);
-  return i2c_start(addr);
-}
-
-// Issue a stop condition, freeing the bus.
-
-void  i2c_stop(void) {
-  setLow(_sda);
-  delayMicroseconds(DELAY);
-  setHigh(_scl);
-  delayMicroseconds(DELAY);
-  setHigh(_sda);
-  delayMicroseconds(DELAY);
-}
-
-// Write one byte to the slave chip that had been addressed
-// by the previous start call. <value> is the byte to be sent.
-// Return: true if the slave replies with an "acknowledge", false otherwise
-bool  i2c_write(uint8_t value) {
-  for (uint8_t curr = 0X80; curr != 0; curr >>= 1) {
-    if (curr & value) {setHigh(_sda);} else  setLow(_sda); 
-    setHigh(_scl);
-    delayMicroseconds(DELAY);
-    setLow(_scl);
-    delayMicroseconds(DELAY);
-  }
-  // get Ack or Nak
-  setHigh(_sda);
-  setHigh(_scl);
-  delayMicroseconds(DELAY);
-  uint8_t ack = digitalRead(_sda);
-  setLow(_scl);
-  delayMicroseconds(DELAY);  
-  setLow(_sda);
-  return ack == 0;
-}
-
-// Read one byte. If <last> is true, we send a NAK after having received 
-// the byte in order to terminate the read sequence. 
-uint8_t  i2c_read(bool last) {
-  uint8_t b = 0;
-  setHigh(_sda);
-  for (uint8_t i = 0; i < 8; i++) {
-    b <<= 1;
-    delayMicroseconds(DELAY);
-    setHigh(_scl);
-    delayMicroseconds(DELAY);
-    if (digitalRead(_sda)) b |= 1;
-    setLow(_scl);
-  }
-  if (last) {setHigh(_sda);} else setLow(_sda);
-  setHigh(_scl);
-  delayMicroseconds(DELAY);
-  setLow(_scl);
-  delayMicroseconds(DELAY);  
-  setLow(_sda);
-  return b;
-}
-
-
-void Temperature::I2C_send_str(char *dat_r,char send_now)
-{
-  int i=0;
-  i2c_stop();
- // static unsigned long timeout = millis() + 100;
- // if(((long)(millis() - timeout) > 0L)||(send_now))
-  {
-  //  timeout=millis() + 100;
-    if(i2c_start((I2C_7BITADDR<<1)|I2C_WRITE))
-    {
-      i2c_write(0x00);
-    // i2c_rep_start((I2C_7BITADDR<<1)|I2C_WRITE);
-      while(*dat_r)
-        i2c_write(*dat_r++);
-    }
-    i2c_stop();
-  }
-    
-  
-}
-
-void Temperature::I2C_read_str(char *dat_r)
-{
-  i2c_stop(); 
-  if(i2c_start((I2C_7BITADDR<<1)|I2C_WRITE))
-  {
-    int i =0;
-    i2c_write(0x00);
-    i2c_rep_start((I2C_7BITADDR<<1)|I2C_READ);
-    while(i<=50)
-    {
-      dat_r[i]= i2c_read(false);
-      if(dat_r[i]==0)
-        break;
-      i++;
-    }
-    i2c_read(true);
-    
-  }
-  i2c_stop();
-}
-#endif
 /**
  * Initialize the temperature manager
  *
@@ -2257,7 +2101,7 @@ void Temperature::I2C_read_str(char *dat_r)
  */
 void Temperature::init() {
 #if PANDA_BED
-   i2c_init();
+   I2CsegmentBED.i2c_init(PANDA_BED_SDA,PANDA_BED_SCL,0x3C);
 #endif   
   TERN_(PROBING_HEATERS_OFF, paused_for_probing = false);
 
@@ -3011,21 +2855,7 @@ void Temperature::readings_ready() {
   TERN_(HAS_JOY_ADC_Y, joystick.y.reset());
   TERN_(HAS_JOY_ADC_Z, joystick.z.reset());
 }
-/*
-void WRITE_HEATER_BED(unsigned char v) 
-{
-  static unsigned char bed_v=0;
-  //if(v!=bed_v)
-  {
-    bed_v=v;
-    
-    YSerial2.write(0x80|(v<<5)|(0x0e));
 
-    
-  }
-  
- // WRITE(HEATER_BED_PIN, (v) ^ HEATER_BED_INVERTING);
-}*/
 /**
  * Timer 0 is shared with millies so don't change the prescaler.
  *

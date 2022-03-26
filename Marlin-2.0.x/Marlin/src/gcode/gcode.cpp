@@ -305,7 +305,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
      // MYSERIAL1.println(parser.command_ptr);
         char tmp[72];
         sprintf(tmp,"%s\n",parser.command_ptr);
-        thermalManager.I2C_send_str(tmp,0);
+        I2CsegmentBED.I2C_send_str(tmp,0);
         
         //  I2C_send_str(parser.command_ptr);
 #endif		
@@ -538,7 +538,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
        M105(); 
 #if PANDA_BED       
        char tmp_1[120];
-       thermalManager.I2C_read_str(tmp_1);
+       I2CsegmentBED.I2C_read_str(tmp_1,0);
      //  I2C_read_str(tmp_1);
        MYSERIAL1.printf(tmp_1);
 #endif        
@@ -572,7 +572,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
 #if PANDA_BED         
           char tmp[72];
           sprintf(tmp,"%s\n",parser.command_ptr);
-          thermalManager.I2C_send_str(tmp,1);
+          I2CsegmentBED.I2C_send_str(tmp,1);
 #endif          
          M140(); break;                                  // M140: Set bed temperature
         case 190: M190(); break;                                  // M190: Wait for bed temperature to reach target
