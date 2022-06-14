@@ -64,7 +64,7 @@
 
 #include "lcd/marlinui.h"
 
-
+#include "feature/bedlevel/bdl/bdl.h"
 
 
 #if HAS_TOUCH_BUTTONS
@@ -731,7 +731,9 @@ void idle(TERN_(ADVANCED_PAUSE_FEATURE, bool no_stepper_sleep/*=false*/)) {
     static uint16_t idle_depth = 0;
     if (++idle_depth > 5) SERIAL_ECHOLNPAIR("idle() call depth: ", idle_depth);
   #endif
-
+#if BD_SENSOR
+  BD_Level.BD_sensor_process();
+#endif  
   // Core Marlin activities
   manage_inactivity(TERN_(ADVANCED_PAUSE_FEATURE, no_stepper_sleep));
 
@@ -1061,6 +1063,360 @@ inline void tmc_standby_setup() {
  *  - Open Touch Screen Calibration screen, if not calibrated
  *  - Set Marlin to RUNNING State
  */
+#if CAN_MASTER_ESP32
+#include "driver/gpio.h"
+#include "driver/can.h"
+
+  can_general_config_t g_config;// = CAN_GENERAL_CONFIG_DEFAULT(GPIO_NUM_5, GPIO_NUM_4, CAN_MODE_NORMAL);
+  can_timing_config_t t_config = CAN_TIMING_CONFIG_1MBITS();
+  can_filter_config_t f_config = CAN_FILTER_CONFIG_ACCEPT_ALL();
+  can_message_t message;
+  
+
+
+static SemaphoreHandle_t can_sem;
+celsius_t new_temp_target;
+#define RX_TASK_PRIO     9
+  
+
+celsius_t target_hotend_slave;
+int connect_flag=0;
+static void extruder_status_task(void *arg)
+{
+    xSemaphoreTake(can_sem, portMAX_DELAY);
+    bool start_cmd = false;
+    bool stop_resp = false;
+    uint32_t iterations = 0;
+    can_message_t rx_msg;
+    while (1) {
+        
+        if (can_receive(&rx_msg, pdMS_TO_TICKS(10)) == ESP_OK)
+         {
+            if(connect_flag==0)
+              connect_flag=1;
+            if(rx_msg.identifier=='M')// read temperature
+            {
+             // printf("\nt:%.5f,%d,%c\n",*((float *)(rx_msg.data)),*((unsigned short *)(rx_msg.data+4)),(char)rx_msg.data[6]);
+              thermalManager.temp_hotend[0].celsius=*((float *)(rx_msg.data));
+             // thermalManager.temp_hotend[0].target=*((unsigned short *)(rx_msg.data+4));
+              target_hotend_slave=*((unsigned short *)(rx_msg.data+4));
+              virtual_esp32_pins[FIL_RUNOUT_PIN-200]=rx_msg.data[6]=='H'?1:0;
+            }
+            else if((rx_msg.identifier&0xff)=='Z')
+            {
+              if(((rx_msg.identifier>>8)&0xff)=='H')
+               // virtual_z_min_pin=1;
+                virtual_esp32_pins[Z_MIN_PIN-200]=1;
+              else
+                virtual_esp32_pins[Z_MIN_PIN-200]=0;
+            }
+            
+        }
+        
+    }
+
+    xSemaphoreGive(can_sem);
+    vTaskDelete(NULL);
+}
+
+
+
+
+void status_sync_can(void)
+{
+  static int16_t old_feedper=feedrate_percentage,old_fan_speed[FAN_COUNT];
+  can_message_t message;
+  if(feedrate_percentage!=old_feedper)
+  {   
+    
+    old_feedper=feedrate_percentage;
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 8;
+    memset(message.data,0,CAN_MAX_DATA_LEN);
+    ////
+    message.identifier='M';
+    message.identifier|=(220<<8);
+    sprintf((char *)message.data,"S%d\n",feedrate_percentage);
+    printf("M220_id:%x,str:%s \n",message.identifier,(char *)message.data );   
+    printf("target:%d,%d\n",thermalManager.temp_hotend[0].target,target_hotend_slave);
+    if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      // printf("send %s \n",message.data);
+    } else {
+      printf("Failed \n");
+    }
+  }
+  /////current_position.e
+
+  ///////
+  if(thermalManager.fan_speed[0]!=old_fan_speed[0])
+  {
+    old_fan_speed[0]=thermalManager.fan_speed[0];
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 8;
+    memset(message.data,0,CAN_MAX_DATA_LEN);
+    ////
+    message.identifier='M';
+    message.identifier|=(106<<8);
+    sprintf((char *)message.data,"S%d\n",thermalManager.fan_speed[0]);
+    printf("M106_id:%x,str:%s \n",message.identifier,(char *)message.data );   
+    if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      // printf("send %s \n",message.data);
+    } else {
+      printf("Failed \n");
+    }
+  }
+
+  ///////////
+  if(target_hotend_slave!=thermalManager.temp_hotend[0].target)
+  {
+    target_hotend_slave=thermalManager.temp_hotend[0].target;
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 8;
+    memset(message.data,0,CAN_MAX_DATA_LEN);
+    ////
+    message.identifier='M';
+    message.identifier|=(104<<8);
+    sprintf((char *)message.data,"S%d\n",thermalManager.temp_hotend[0].target);
+    printf("M104_id:%x,str:%s \n",message.identifier,(char *)message.data );   
+    if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      // printf("send %s \n",message.data);
+    } else {
+      printf("Failed \n");
+    }
+  }
+  ///
+#if ENABLED(CAN_ESP32_PT100_MAX31865)  
+  if(connect_flag==1)
+  {
+    connect_flag=2;
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 8;
+    memset(message.data,0,CAN_MAX_DATA_LEN);
+    ////G93 to switch to pt100 sensor
+    message.identifier='G';
+    message.identifier|=(93<<8);
+    sprintf((char *)message.data,"\n");
+    printf("G93_id:%x,str:%s \n",message.identifier,(char *)message.data );   
+    if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      // printf("send %s \n",message.data);
+    } else {
+      printf("Failed \n");
+    }
+  }
+#endif  
+}
+
+void init_data_sync_can(void)
+{
+
+  can_message_t message;
+   
+  message.flags = CAN_MSG_FLAG_EXTD;
+  message.data_length_code = 8;
+ 
+  /////////M92 E steps
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  message.identifier='M';
+  message.identifier|=(92<<8);
+  sprintf((char *)message.data,"E%.1f\n",planner.settings.axis_steps_per_mm[E_AXIS]);
+  printf("M92:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"X%.1f\n",planner.settings.axis_steps_per_mm[X_AXIS]);
+  printf("M92:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"Y%.1f\n",planner.settings.axis_steps_per_mm[Y_AXIS]);
+  printf("M92:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"Z%.1f\n",planner.settings.axis_steps_per_mm[Z_AXIS]);
+  printf("M92:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  //////////
+ /////////M201 set max acceleration
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  message.identifier='M';
+  message.identifier|=(201<<8);
+  sprintf((char *)message.data,"E%d\n",planner.settings.max_acceleration_mm_per_s2[E_AXIS]);
+  printf("M201:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"X%d\n",planner.settings.max_acceleration_mm_per_s2[X_AXIS]);
+  printf("M201:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"Y%d\n",planner.settings.max_acceleration_mm_per_s2[Y_AXIS]);
+  printf("M201:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"Z%d\n",planner.settings.max_acceleration_mm_per_s2[Z_AXIS]);
+  printf("M201:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  //////////
+ /////////M203 set max feedrate
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  message.identifier='M';
+  message.identifier|=(203<<8);
+  sprintf((char *)message.data,"E%d\n",planner.settings.max_feedrate_mm_s[E_AXIS] );
+  printf("M203:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"X%d\n",planner.settings.max_feedrate_mm_s[X_AXIS] );
+  printf("M203:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"Y%d\n",planner.settings.max_feedrate_mm_s[Y_AXIS] );
+  printf("M203:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  sprintf((char *)message.data,"Z%d\n",planner.settings.max_feedrate_mm_s[Z_AXIS] );
+  printf("M203:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+
+  //////////
+ /////////M204 set DEFAULT_MAX_ACCELERATION  
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  message.identifier='M';
+  message.identifier|=(204<<8);
+  sprintf((char *)message.data,"P%.1f\n",planner.settings.acceleration );
+  printf("M204 P:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  //////////
+   /////////M204 set DEFAULT_RETRACT_ACCELERATION 
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  message.identifier='M';
+  message.identifier|=(204<<8);
+  sprintf((char *)message.data,"R%.1f\n",planner.settings.retract_acceleration );
+  printf("M204 R:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+    // printf("send %s \n",message.data);
+  } else {
+    printf("Failed \n");
+  }
+  //////////
+  /////////M301 set PID
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  message.identifier='M';
+  message.identifier|=(301<<8);
+  sprintf((char *)message.data,"P%.3f\n", thermalManager.temp_hotend[0].pid.Kp);
+  printf("M301 P:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+  } else {
+    printf("Failed \n");
+  }
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  sprintf((char *)message.data,"I%.3f\n", thermalManager.temp_hotend[0].pid.Ki);
+  printf("M301 I:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+  } else {
+    printf("Failed \n");
+  }
+  memset(message.data,0,CAN_MAX_DATA_LEN);
+  sprintf((char *)message.data,"D%.3f\n", thermalManager.temp_hotend[0].pid.Kd);
+  printf("M301 D:%x,str:%s \n",message.identifier,(char *)message.data );   
+  if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+  } else {
+    printf("Failed \n");
+  }
+
+  //////////
+}
+
+void ESP32_CAN_INIT()
+{
+ //Initialize configuration structures using macro initializers
+
+
+  g_config.mode=CAN_MODE_NORMAL;
+  g_config.tx_io=GPIO_NUM_15;
+  g_config.rx_io=GPIO_NUM_13;
+  g_config.tx_queue_len=50;
+  g_config.rx_queue_len=5;
+
+
+
+  //g_config.clkout_io=CAN_IO_UNUSED;
+  //g_config.bus_off_io=CAN_IO_UNUSED;
+ 
+  g_config.alerts_enabled=CAN_ALERT_NONE;
+  g_config.clkout_divider=0;
+
+  can_sem = xSemaphoreCreateBinary();
+  xTaskCreatePinnedToCore(extruder_status_task, "CAN_rsx", 4096, NULL, RX_TASK_PRIO, NULL, tskNO_AFFINITY);
+
+
+  //Install CAN driver
+  if (can_driver_install(&g_config, &t_config, &f_config) == ESP_OK) {
+      printf("Driver installed\n");
+  } else {
+      printf("Failed to install driver\n");
+      return;
+  }
+
+  //Start CAN driver
+  if (can_start() == ESP_OK) {
+      printf("Driver started\n");
+  } else {
+      printf("Failed to start driver\n");
+      return;
+  }
+
+   xSemaphoreGive(can_sem);                     //Start RX task
+#if HAS_SERVOS   
+  servo_init();  
+#endif  
+#if CAN_MASTER_ESP32
+  init_data_sync_can();
+#endif
+}
+
+#endif
+
+
 void setup() {
   #ifdef BOARD_PREINIT
     BOARD_PREINIT(); // Low-level init (before serial init)
@@ -1570,6 +1926,13 @@ void setup() {
 
   marlin_state = MF_RUNNING;
 
+#if CAN_MASTER_ESP32      
+  ESP32_CAN_INIT();  
+#endif
+#if BD_SENSOR
+   // 
+    BD_Level.init(I2C_BD_SDA_PIN,I2C_BD_SCL_PIN,I2C_BD_DELAY);   
+#endif
   SETUP_LOG("setup() completed.");
 }
 
@@ -1592,9 +1955,9 @@ void loop() {
    
   do {
      
-     
-
-      
+#if CAN_MASTER_ESP32     
+   status_sync_can();
+#endif 
     idle();
  
     #if ENABLED(SDSUPPORT)

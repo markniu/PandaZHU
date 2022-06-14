@@ -42,7 +42,7 @@
 
 // Read a pin wrapper
 #if (MOTHERBOARD == BOARD_PANDA_ZHU)||(MOTHERBOARD == BOARD_PANDA_M4)
-    #define READ(IO)                digitalRead(IO) 
+    #define READ(IO)                ((IO<200)? digitalRead(IO) : virtual_esp32_pins[IO-200] )
     #define WRITE(IO, v)            (IO>=100 ? Write_EXIO(IO,v) : digitalWrite(IO, v))
 #else
     #define READ(IO)                (IS_I2S_EXPANDER_PIN(IO) ? i2s_state(I2S_EXPANDER_PIN_INDEX(IO)) : digitalRead(IO))

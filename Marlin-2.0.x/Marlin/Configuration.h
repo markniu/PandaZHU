@@ -37,6 +37,8 @@
  */
 #define CONFIGURATION_H_VERSION 02000801
 //#define PANDA_BED 1
+#define CAN_MASTER_ESP32  0
+//#define CAN_ESP32_PT100_MAX31865   // enable this to use PT100 instead of thermistor.
 //===========================================================================
 //============================= Getting Started =============================
 //===========================================================================
@@ -631,7 +633,7 @@
  *
  * *** IT IS HIGHLY RECOMMENDED TO LEAVE THIS OPTION ENABLED! ***
  */
-#define PREVENT_COLD_EXTRUSION
+//#define PREVENT_COLD_EXTRUSION
 #define EXTRUDE_MINTEMP 170
 
 /**
@@ -1290,7 +1292,10 @@
  * RAMPS-based boards use SERVO3_PIN for the first runout sensor.
  * For other boards you may need to define FIL_RUNOUT_PIN, FIL_RUNOUT2_PIN, etc.
  */
-//#define FILAMENT_RUNOUT_SENSOR
+#if CAN_MASTER_ESP32
+#define FILAMENT_RUNOUT_SENSOR
+#endif
+
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
@@ -1412,6 +1417,13 @@
   #define LEVELING_NOZZLE_TEMP 120   // (°C) Only applies to E0 at this time
   #define LEVELING_BED_TEMP     50
 #endif
+
+/*Bed Distance Sensor,
+ it can measure the distance from bed to nozzle with distance resolution 0.01mm
+ For information about this sensor https://github.com/markniu/Bed_Distance_sensor
+ Communicated to this sensor with I2C port,so it require a I2C libarary markyue/Panda_SoftMasterI2C
+*/
+#define BD_SENSOR 0  
 
 /**
  * Enable detailed logging of G28, G29, M48, etc.
@@ -1733,7 +1745,7 @@
  *    P1  Raise the nozzle always to Z-park height.
  *    P2  Raise the nozzle by Z-park amount, limited to Z_MAX_POS.
  */
-//#define NOZZLE_PARK_FEATURE
+#define NOZZLE_PARK_FEATURE
 
 #if ENABLED(NOZZLE_PARK_FEATURE)
   // Specify a park position as { X, Y, Z_raise }

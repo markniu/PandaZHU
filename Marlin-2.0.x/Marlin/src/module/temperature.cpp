@@ -1994,7 +1994,7 @@ void Temperature::updateTemperaturesFromRawValues() {
   TERN_(HAS_POWER_MONITOR,     power_monitor.capture_values());
 
   #if HAS_HOTEND
-
+ #if !CAN_MASTER_ESP32
     static constexpr int8_t temp_dir[] = {
       TERN(TEMP_SENSOR_0_IS_MAX_TC, 0, TEMPDIR(0))
       #if HAS_MULTI_HOTEND
@@ -2025,7 +2025,7 @@ void Temperature::updateTemperaturesFromRawValues() {
         #endif
       }
     }
-
+#endif
   #endif // HAS_HOTEND
 
   #if ENABLED(THERMAL_PROTECTION_BED)
@@ -3405,7 +3405,10 @@ void Temperature::isr() {
 #if HAS_TEMP_SENSOR
 
   #include "../gcode/gcode.h"
-
+#if CAN_MASTER_ESP32
+#include "driver/gpio.h"
+#include "driver/can.h"
+#endif
   /**
    * Print a single heater state in the form:
    *        Bed: " B:nnn.nn /nnn.nn"
@@ -3464,7 +3467,23 @@ void Temperature::isr() {
   void Temperature::print_heater_states(const uint8_t target_extruder
     OPTARG(TEMP_SENSOR_1_AS_REDUNDANT, const bool include_r/*=false*/)
   ) {
-    #if HAS_TEMP_HOTEND
+
+#if HAS_TEMP_HOTEND
+  #if CAN_MASTER_ESP32
+    can_message_t message;
+    //send M105
+    message.identifier='M';
+    message.identifier|=(0x69<<8);
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 0;
+  
+    if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      //printf("send ok Tdata:%.5f,%d,%c \n",*(float *)message.data,*(unsigned short *)(message.data+4),*(char *)(message.data+6));
+    } else {
+      printf("Failed \n");
+    }
+     
+  #endif   
       print_heater_state(H_NONE, degHotend(target_extruder), degTargetHotend(target_extruder) OPTARG(SHOW_TEMP_ADC_VALUES, rawHotendTemp(target_extruder)));
       #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
         if (include_r) print_heater_state(H_REDUNDANT, degHotendRedundant(), degTargetHotend(0) OPTARG(SHOW_TEMP_ADC_VALUES, rawHotendTempRedundant()));

@@ -12,23 +12,33 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "d:/GitHub/PandaZHU/Marlin-2.0.x/.pio/build/esp32/firmware.elf",
-            "projectEnvName": "esp32",
-            "toolchainBinDir": "C:/Users/53671/.platformio/packages/toolchain-xtensa32/bin",
+            "executable": "d:/luojin/GitHub/PandaZHU/Marlin-2.0.x/.pio/build/PANDA_ZHU/firmware.elf",
+            "projectEnvName": "PANDA_ZHU",
+            "toolchainBinDir": "C:/Users/DELL/.platformio/packages/toolchain-xtensa32/bin",
             "internalConsoleOptions": "openOnSessionStart",
             "preLaunchTask": {
                 "type": "PlatformIO",
-                "task": "Pre-Debug (esp32)"
+                "task": "Pre-Debug"
             }
         },
         {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "d:/GitHub/PandaZHU/Marlin-2.0.x/.pio/build/esp32/firmware.elf",
-            "projectEnvName": "esp32",
-            "toolchainBinDir": "C:/Users/53671/.platformio/packages/toolchain-xtensa32/bin",
+            "executable": "d:/luojin/GitHub/PandaZHU/Marlin-2.0.x/.pio/build/PANDA_ZHU/firmware.elf",
+            "projectEnvName": "PANDA_ZHU",
+            "toolchainBinDir": "C:/Users/DELL/.platformio/packages/toolchain-xtensa32/bin",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (without uploading)",
+            "executable": "d:/luojin/GitHub/PandaZHU/Marlin-2.0.x/.pio/build/PANDA_ZHU/firmware.elf",
+            "projectEnvName": "PANDA_ZHU",
+            "toolchainBinDir": "C:/Users/DELL/.platformio/packages/toolchain-xtensa32/bin",
+            "internalConsoleOptions": "openOnSessionStart",
+            "loadMode": "manual"
         }
     ]
 }

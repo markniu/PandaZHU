@@ -94,7 +94,7 @@ extern uint16_t HAL_adc_result;
 void toneInit();
 void tone(const pin_t _pin, const unsigned int frequency, const unsigned long duration=0);
 void noTone(const pin_t _pin);
-
+ extern bool virtual_esp32_pins[32];
 // clear reset reason
 void HAL_clear_reset_source();
 

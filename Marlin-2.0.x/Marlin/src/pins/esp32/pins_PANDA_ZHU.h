@@ -22,7 +22,14 @@
 #pragma once
 
 /**
- * Espressif ESP32 (Tensilica Xtensa LX6) pin assignments
+ * @file pins_PANDA_ZHU.h
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2022-06-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  */
 
 #include "env_validate.h"
@@ -37,13 +44,24 @@
 #define  PANDA_BED_SCL  13  
 #endif
 
+#if BD_SENSOR
+#define  I2C_BD_SDA_PIN   15
+#define  I2C_BD_SCL_PIN   13
+#define  I2C_BD_DELAY  10
+#endif
+
 //
 // Limit Switches
 //
 #define X_MIN_PIN                             4
 #define Y_MIN_PIN                             35
-#define Z_MIN_PIN                             21
 
+#if CAN_MASTER_ESP32
+#define Z_MIN_PIN                             200
+#define FIL_RUNOUT_PIN                        201
+#else
+#define Z_MIN_PIN                             21
+#endif
 //
 // Steppers
 //

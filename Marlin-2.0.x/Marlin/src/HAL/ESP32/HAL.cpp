@@ -57,7 +57,7 @@ portMUX_TYPE spinlock = portMUX_INITIALIZER_UNLOCKED;
 // ------------------------
 
 #define V_REF 1100
-
+bool virtual_esp32_pins[32];
 // ------------------------
 // Public Variables
 // ------------------------
@@ -110,7 +110,7 @@ void Write_EXIO(unsigned char IO,unsigned char v)
 #endif
 void HAL_init_board() {
 #if (MOTHERBOARD == BOARD_PANDA_ZHU)||(MOTHERBOARD == BOARD_PANDA_M4)
-   esp_task_wdt_init(10, true); //panda
+   esp_task_wdt_init(30, true); //panda
 #endif   
   #if ENABLED(ESP3D_WIFISUPPORT)
     esp3dlib.init();

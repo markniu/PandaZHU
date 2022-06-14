@@ -24,7 +24,10 @@
 #include "../../inc/MarlinConfig.h"
 
 #if HAS_SERVOS
-
+#if CAN_MASTER_ESP32
+#include "driver/gpio.h"
+#include "driver/can.h"
+#endif
 #include "Servo.h"
 
 // Adjacent channels (0/1, 2/3 etc.) share the same timer and therefore the same frequency and resolution settings on ESP32,
@@ -57,6 +60,23 @@ void Servo::write(int inDegrees) {
 
 void Servo::move(const int value) {
   constexpr uint16_t servo_delay[] = SERVO_DELAY;
+  
+  //M280 Px S
+#if CAN_MASTER_ESP32
+   can_message_t message;
+   printf("Servo:%d\n",value); 
+    //send M105
+    message.identifier='M';
+    message.identifier|=(280<<8);
+    message.flags = CAN_MSG_FLAG_EXTD;
+    message.data_length_code = 8;
+    sprintf((char *)message.data,"P0 S%d",value); 
+    if (can_transmit(&message, pdMS_TO_TICKS(100)) == ESP_OK) {
+      printf("Servo can:%s \n",(char *)message.data);
+    } else {
+      printf("Failed \n");
+    }
+#endif
   static_assert(COUNT(servo_delay) == NUM_SERVOS, "SERVO_DELAY must be an array NUM_SERVOS long.");
   if (attach(0) >= 0) {
     write(value);

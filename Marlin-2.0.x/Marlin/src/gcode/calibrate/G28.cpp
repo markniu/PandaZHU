@@ -470,9 +470,9 @@ void GcodeSuite::G28() {
       stepperY2.rms_current(tmc_save_current_Y2);
     #endif
   #endif
-
+#if !CAN_MASTER_ESP32
   ui.refresh();
-
+#endif
   TERN_(DWIN_CREALITY_LCD, DWIN_CompletedHoming());
   TERN_(EXTENSIBLE_UI, ExtUI::onHomingComplete());
 
