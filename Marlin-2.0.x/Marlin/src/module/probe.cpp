@@ -47,7 +47,9 @@
 #if ENABLED(DELTA)
   #include "delta.h"
 #endif
-
+#if BD_SENSOR
+#include "../feature/bedlevel/bdl/bdl.h"
+#endif
 #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
   #include "planner.h"
 #endif
@@ -746,6 +748,26 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/) {
 float Probe::probe_at_point(const_float_t rx, const_float_t ry, const ProbePtRaise raise_after/*=PROBE_PT_NONE*/, const uint8_t verbose_level/*=0*/, const bool probe_relative/*=true*/, const bool sanity_check/*=true*/) {
   DEBUG_SECTION(log_probe, "Probe::probe_at_point", DEBUGGING(LEVELING));
 
+#if BD_SENSOR
+
+  float measured_z = NAN;
+  xyz_pos_t npos = { rx, ry, _MIN(TERN(DELTA, delta_clip_start_height, current_position.z), current_position.z) };
+  if (probe_relative) {                                     // The given position is in terms of the probe
+    if (!can_reach(npos)) {
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Position Not Reachable");
+      return NAN;
+    }
+    npos -= offset_xy;                                      // Get the nozzle position
+  }
+  else if (!position_is_reachable(npos)) return NAN;        // The given position is in terms of the nozzle
+
+  // Move the probe to the starting XYZ
+  do_blocking_move_to(npos, feedRate_t(XY_PROBE_FEEDRATE_MM_S));
+
+  
+  measured_z=BD_Level.BD_sensor_read();
+
+#else
   if (DEBUGGING(LEVELING)) {
     DEBUG_ECHOLNPAIR(
       "...(", LOGICAL_X_POSITION(rx), ", ", LOGICAL_Y_POSITION(ry),
@@ -794,7 +816,7 @@ float Probe::probe_at_point(const_float_t rx, const_float_t ry, const ProbePtRai
       SERIAL_ERROR_MSG(STR_ERR_PROBING_FAILED);
     #endif
   }
-
+#endif
   return measured_z;
 }
 
