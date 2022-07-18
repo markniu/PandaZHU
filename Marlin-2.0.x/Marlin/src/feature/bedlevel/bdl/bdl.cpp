@@ -109,7 +109,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
           
           babystep.set_mm(Z_AXIS,(cur_z-z_sensor));
 #if DEBUG_OUT_BD          
-          SERIAL_ECHOLNPGM("BD:",z_sensor,", Z:",cur_z,"|",current_position.z);
+          printf("BD:%.2f,z:%.2f;c_z:%.2f\n",z_sensor,cur_z,current_position.z);
 #endif          
       }
       else{
@@ -128,13 +128,13 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
     else
       stepper.set_directions();
 #if DEBUG_OUT_BD      
-    SERIAL_ECHOLNPGM("BD:",tmp&0x3ff,", Z:",cur_z,"|",current_position.z);
+    printf("BD:%d,z:%.2f,c_z:%.2f\n",tmp&0x3ff,cur_z,current_position.z);
 #endif     
     
     if(BD_I2C_SENSOR.BD_Check_OddEven(tmp)==0){
       sprintf_P(tmp_1,  PSTR("M117 sensor connect error"));
 #if DEBUG_OUT_BD          
-      SERIAL_ECHOLNPGM("BDsensor connect error"); 
+      printf("BDsensor connect error\n"); 
 #endif           
     }
     else if((tmp&0x3ff)>1020){
@@ -142,7 +142,7 @@ void Bed_Distance_sensor_level::BD_sensor_process(void){
       safe_delay(10);
       sprintf_P(tmp_1,  PSTR("M117 sensor data error"));
 #if DEBUG_OUT_BD       
-      SERIAL_ECHOLNPGM("BDsensor data error"); 
+      printf("BDsensor data error\n"); 
 #endif      
     }
      // enquen M117 

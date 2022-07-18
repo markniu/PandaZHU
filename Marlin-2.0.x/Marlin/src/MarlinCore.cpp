@@ -1931,7 +1931,7 @@ void setup() {
 #endif
 #if BD_SENSOR
    // 
-    BD_Level.init(I2C_BD_SDA_PIN,I2C_BD_SCL_PIN,I2C_BD_DELAY);   
+    BD_Level.init(I2C_BD_SDA_PIN,I2C_BD_SCL_PIN,I2C_BD_DELAY*10);   
 #endif
   SETUP_LOG("setup() completed.");
 }

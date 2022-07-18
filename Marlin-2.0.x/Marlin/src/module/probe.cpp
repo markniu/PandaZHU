@@ -275,7 +275,8 @@ xyz_pos_t Probe::offset; // Initialized by settings.load()
  */
 void Probe::do_z_raise(const float z_raise) {
   if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPAIR("Probe::do_z_raise(", z_raise, ")");
-  float z_dest = z_raise;
+  printf("Probe::do_z_raise:%0.2f\n", z_raise);
+  float z_dest = z_raise/2;
   if (offset.z < 0) z_dest -= offset.z;
   do_z_clearance(z_dest);
 }
