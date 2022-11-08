@@ -1943,6 +1943,33 @@ void Temperature::manage_heater() {
   }
 #endif // HAS_TEMP_PROBE
 
+#if PANDA_BED
+#include <stdio.h>
+#include <string.h> 
+
+void split(char *src,const char *separator,char **dest,int *num) {
+     char *pNext;
+     int count = 0;
+     if (src == NULL || strlen(src) == 0)
+        return;
+
+     if (separator == NULL || strlen(separator) == 0)
+        return;   
+
+	char *strtok(char *str, const char *delim); 
+    pNext = strtok(src,separator);
+    while(pNext != NULL) {
+        *dest++ = pNext; 
+        ++count;
+
+        pNext = strtok(NULL,separator);  
+    }  
+    *num = count;
+}    
+
+#endif
+ 
+
 /**
  * Convert the raw sensor readings into actual Celsius temperatures and
  * validate raw temperatures. Bad readings generate min/maxtemp errors.
@@ -1973,16 +2000,27 @@ void Temperature::updateTemperaturesFromRawValues() {
     char tmp_1[64];
     celsius_float_t I2C_temp;
     memset(tmp_1,0,sizeof(tmp_1));
-    I2CsegmentBED.I2C_read_str(tmp_1,1);//read one heating temperature.
+    I2CsegmentBED.I2C_read_str(tmp_1,0);//read one heating temperature.
     I2C_temp=atof(tmp_1);
     if(I2C_temp>2&&I2C_temp<200)
     {
         TERN_(HAS_HEATED_BED,   temp_bed.celsius     = atof(tmp_1));
     }
     timeout_bed=millis();
+     ///parse the temperature. https://blog.csdn.net/weixin_44189994/article/details/105188648
+    char *p[10]={0};
+    int num=0,i;
+    celsius_float_t max_tmp=0,tmper_curr=0;
+    split(tmp_1,",",p,&num);
+    for(i = 0;i < num; i ++) {
+        tmper_curr=atof(p[i]);
+         if(max_tmp<tmper_curr)
+          max_tmp=tmper_curr;
+        //    printf("%s\n",p[i]);
+      }
+    temp_bed.celsius     = max_tmp;
  }
- ///parse the temperature. https://blog.csdn.net/weixin_44189994/article/details/105188648
- //temp_bed.celsius     = 
+
 #else
   TERN_(HAS_HEATED_BED,   temp_bed.celsius     = analog_to_celsius_bed(temp_bed.raw));
 #endif  
@@ -2101,7 +2139,7 @@ void Temperature::updateTemperaturesFromRawValues() {
  */
 void Temperature::init() {
 #if PANDA_BED
-   I2CsegmentBED.i2c_init(PANDA_BED_SDA,PANDA_BED_SCL,0x3C);
+   I2CsegmentBED.i2c_init(PANDA_BED_SDA,PANDA_BED_SCL,0x3C,100);
 #endif   
   TERN_(PROBING_HEATERS_OFF, paused_for_probing = false);
 
