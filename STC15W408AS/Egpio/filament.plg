@@ -1,0 +1,38 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\DELL\Downloads\printer2020-master\printer2020-master\esp32\Egpio\egpio.uvproj
+Project File Date:  09/01/2025
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+STC15Fxxxx.H(537): warning C322: unknown identifier
+STC15Fxxxx.H(539): warning C322: unknown identifier
+STC15Fxxxx.H(541): warning C322: unknown identifier
+STC15Fxxxx.H(543): warning C322: unknown identifier
+STC15Fxxxx.H(545): warning C322: unknown identifier
+STC15Fxxxx.H(547): warning C322: unknown identifier
+STC15Fxxxx.H(549): warning C322: unknown identifier
+compiling USART.c...
+compiling GPIO.c...
+STC15Fxxxx.H(537): warning C322: unknown identifier
+STC15Fxxxx.H(539): warning C322: unknown identifier
+STC15Fxxxx.H(541): warning C322: unknown identifier
+STC15Fxxxx.H(543): warning C322: unknown identifier
+STC15Fxxxx.H(545): warning C322: unknown identifier
+STC15Fxxxx.H(547): warning C322: unknown identifier
+STC15Fxxxx.H(549): warning C322: unknown identifier
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY_MS?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?RECEIVEBYTE?USART
+Program Size: data=90.1 xdata=32 code=2356
+creating hex file from "filament"...
+"filament" - 0 Error(s), 16 Warning(s).
+Clean started: Project: 'egpio'
+   deleting intermediate output files for target 'Target 1'

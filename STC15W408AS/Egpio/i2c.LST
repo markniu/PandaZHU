@@ -1,0 +1,12 @@
+C51 COMPILER V9.56.0.0   I2C                                                               06/16/2021 10:12:54 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN i2c.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE i2c.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+*** ERROR C318 OF i2c.c: can't open file 'i2c.c'
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)
