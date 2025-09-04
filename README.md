@@ -13,9 +13,11 @@ Powerful:
 Easy to use with [ESP3D](https://github.com/luc-github/ESP3DLib): 
 1. upload marlin firmware through wifi with browser.
 2. upload gcode file, configure printer and control printer wireless with browser.
- 
 
 ![](https://gitee.com/markyue/pandapi_wiki/raw/master/imges/esp/2esp32.jpg)
+
+
+**Schematic and PCB** :  https://lceda.cn/editor#id=|76df4c30e64a4a0e8b331701bcd5ef3b|dc6ebede846a4c37bc87288abd6338f3
 
 Items | Specifications  
 --- | --- 
